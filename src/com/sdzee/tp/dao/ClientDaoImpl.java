@@ -73,19 +73,19 @@ public class ClientDaoImpl implements ClientDao {
 
 	@Override
 	public Client getById(UUID id) throws BeanException, DaoException {
-		Client client = null;
+		Client client = new Client();
         Connection connexion = null;
         PreparedStatement statement = null;
         ResultSet resultat = null;
 
         try {
             connexion = DaoFactory.getConnection();
-            statement = connexion.prepareStatement("SELECT id_client, nom, prenom, password, telephone, email FROM client WHERE id = UuidToBin(?);");
+            statement = connexion.prepareStatement("SELECT UuidFromBin(id_client), nom, prenom, password, telephone, email FROM client WHERE id_client = UuidToBin(?);");
             statement.setString(1, id.toString());
             resultat = statement.executeQuery();
             
             while (resultat.next()) {
-            	UUID idA = UUID.fromString(resultat.getString("id_client"));
+            	UUID idA = UUID.fromString(resultat.getString("UuidFromBin(id_client)"));
             	String nom = resultat.getString("nom");
             	String prenom = resultat.getString("prenom");
                 String telephone = resultat.getString("telephone");
@@ -106,6 +106,7 @@ public class ClientDaoImpl implements ClientDao {
                 }
             } catch (SQLException e2) {
             }
+            e.printStackTrace();
             throw new DaoException("Impossible de communiquer avec la base de données");
         }
         /*finally {
@@ -200,7 +201,7 @@ public class ClientDaoImpl implements ClientDao {
             resultat = statement.executeQuery("SELECT UuidFromBin(id_client), nom, prenom, password, telephone, email FROM client;");
 
             while (resultat.next()) {
-            	UUID idA = UUID.fromString(resultat.getString("id_client"));
+            	UUID idA = UUID.fromString(resultat.getString("UuidFromBin(id_client)"));
             	String nom = resultat.getString("nom");
             	String prenom = resultat.getString("prenom");
                 String telephone = resultat.getString("telephone");

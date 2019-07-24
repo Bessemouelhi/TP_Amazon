@@ -13,7 +13,7 @@
 	<c:import url="/inc/menu.jsp" />
 
 	<%-- Si et seulement si la Map des clients en context n'est pas vide, alors il est possible de créer une commande --%>
-	<c:if test="${ !empty applicationScope.clients }">
+	<c:if test="${ !empty clients }">
 		<div>
 			<form method="post" action="<c:url value="/creationCommande"/>">
 				<fieldset>
@@ -22,11 +22,11 @@
 						<select name="listeClients" id="listeClients">
 							<option value="">Choisissez un client...</option>
 							<%-- Boucle sur la map des clients --%>
-							<c:forEach items="${ applicationScope.clients }" var="client">
+							<c:forEach items="${ clients }" var="client">
 								<%--  L'expression EL ${mapClients.value} permet de cibler l'objet Client stocké en tant que valeur dans la Map, 
 	                                  et on cible ensuite simplement ses propriétés nom et prenom comme on le ferait avec n'importe quel bean. --%>
-								<option value="${ client.value.id }">${ client.value.prenom }
-									${ client.value.nom } (${ client.value.id })</option>
+								<option value="${ client.id }">${ client.prenom }
+									${ client.nom } (${ client.id })</option>
 							</c:forEach>
 						</select>
 					</div>
@@ -97,25 +97,7 @@
 					value="Remettre à zéro" /> <br />
 			</form>
 		</div>
-
-		<script src="<c:url value="/inc/jquery.js"/>"></script>
-
-		<%-- Petite fonction jQuery permettant le remplacement de la première partie du formulaire par la liste déroulante, au clic sur le bouton radio. --%>
-		<script>
-			jQuery(document).ready(
-					function() {
-						/* 1 - Au lancement de la page, on cache le bloc d'éléments du formulaire correspondant aux clients existants */
-						$("div#ancienClient").hide();
-						/* 2 - Au clic sur un des deux boutons radio "choixNouveauClient", on affiche le bloc d'éléments correspondant (nouveau ou ancien client) */
-						jQuery('input[name=choixNouveauClient]:radio').click(
-								function() {
-									$("div#nouveauClient").hide();
-									$("div#ancienClient").hide();
-									var divId = jQuery(this).val();
-									$("div#" + divId).show();
-								});
-					});
-		</script>
+		
 	</c:if>
 
 	<%-- Sinon on retourne une erreur --%>

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
@@ -20,11 +21,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.sdzee.tp.beans.Article;
 import com.sdzee.tp.beans.Client;
 import com.sdzee.tp.beans.Commande;
+import com.sdzee.tp.beans.CommandeLine;
 import com.sdzee.tp.dao.ArticleDao;
 import com.sdzee.tp.dao.ClientDao;
+import com.sdzee.tp.dao.CommandeDao;
+import com.sdzee.tp.dao.CommandeLineDao;
 import com.sdzee.tp.dao.DaoException;
 import com.sdzee.tp.dao.DaoFactory;
 import com.sdzee.tp.utils.StaticStrings;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet implementation class InitDB
@@ -35,22 +42,26 @@ public class InitDB extends HttpServlet {
 	DaoFactory daoFactory = DaoFactory.getInstance();
 	ArticleDao articleDao = daoFactory.getArticleDao();
 	ClientDao clientDao = daoFactory.getClientDao();
+	CommandeDao commandeDao = daoFactory.getCommandeDao();
+	CommandeLineDao lineDao = daoFactory.getCommandeLineDao();
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Logger log = LoggerFactory.getLogger(getClass());
+		log.info("Debut de InitDB");
 		/* CLIENTS */
 		Client c1 = new Client("aaaaaaaa", "aaaaaaaa", "aaaaaaaa", "0123456789", "aaaaaaaa@mail.com");
 		Client c2 = new Client("bbbbbbbb", "bbbbbbbb", "bbbbbbbb", "1234567890", "bbbbbbbb@mail.com");
 		Client c3 = new Client("cccccccc", "cccccccc", "cccccccc", "2345678901", "cccccccc@mail.com");
 		Client c4 = new Client("dddddddd", "dddddddd", "dddddddd", "3456789012", "dddddddd@mail.com");
 		
-		/*try {
+		try {
 			clientDao.add(c1);
 			clientDao.add(c2);
 			clientDao.add(c3);
 			clientDao.add(c4);
 		} catch (DaoException e1) {
 			e1.printStackTrace();
-		}*/
+		}
 		
         ServletContext context = request.getServletContext();
 		Map<UUID, Client> clients = (Map<UUID, Client>) context.getAttribute(StaticStrings.CLIENT_CONTEXT_NAME_MAP);
@@ -73,14 +84,14 @@ public class InitDB extends HttpServlet {
         Article a3 = new Article("ordinateur", "Un super Or 10 routeur", 100.0);
         Article a4 = new Article("bureau", "Un super Bures Haut", 50.0);
         
-        /*try {
+        try {
 			articleDao.add(a1);
 	        articleDao.add(a2);
 	        articleDao.add(a3);
 	        articleDao.add(a4);
 		} catch (DaoException e1) {
 			e1.printStackTrace();
-		}*/
+		}
         
 		Map<UUID, Article> articles = (Map<UUID, Article>) context.getAttribute(StaticStrings.ARTICLE_CONTEXT_NAME_MAP);
         /* Create map if none exist */
@@ -99,6 +110,7 @@ public class InitDB extends HttpServlet {
         /* COMMANDES */
         Map<UUID, Integer> lc1 = new HashMap<UUID, Integer>();
         lc1.put(a1.getId(), 1); lc1.put(a2.getId(), 2);
+        
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
 		try {
@@ -108,6 +120,7 @@ public class InitDB extends HttpServlet {
 			e.printStackTrace();
 		}
 		Commande co1 = new Commande(c1.getId(), date, "Carte", "Validé", "La Poste", "En cours", lc1);
+		
         
         Map<UUID, Integer> lc2 = new HashMap<UUID, Integer>();
         lc2.put(a1.getId(), 1); lc2.put(a3.getId(), 6);
@@ -128,6 +141,16 @@ public class InitDB extends HttpServlet {
 			e.printStackTrace();
 		}
         Commande co3 = new Commande(c2.getId(), date, "Carte", "Validé", "DHL", "En cours", lc3);
+        
+        try {
+        	commandeDao.add(co1);
+        	commandeDao.add(co2);
+        	commandeDao.add(co3);
+		} catch (DaoException e1) {
+			e1.printStackTrace();
+		}
+        
+        
         
         Map<UUID, Commande> commandes = (Map<UUID, Commande>) context.getAttribute(StaticStrings.COMMANDE_CONTEXT_NAME_MAP);
         /* Create map if none exist */

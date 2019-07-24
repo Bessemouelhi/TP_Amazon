@@ -12,18 +12,32 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sdzee.tp.beans.BeanException;
 import com.sdzee.tp.beans.Client;
+import com.sdzee.tp.dao.ClientDao;
+import com.sdzee.tp.dao.DaoException;
+import com.sdzee.tp.dao.DaoFactory;
 import com.sdzee.tp.utils.Functions;
 import com.sdzee.tp.utils.StaticStrings;
 
 @WebServlet(StaticStrings.CLIENT_URL_DELETE)
 public class SuppressionClient extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
+	DaoFactory daoFactory = DaoFactory.getInstance();
+	ClientDao clientDao = daoFactory.getClientDao();
 
 
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         /* Récupération du paramètre */
         UUID id = UUID.fromString( Functions.getValeurParametre( request, StaticStrings.CLIENT_PARAM_ID ) );
+        try {
+			//Client client = clientDao.getById(id);
+			clientDao.delete(id);
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         /* Récupération de la Map des clients enregistrés en context */
         ServletContext context = request.getServletContext();

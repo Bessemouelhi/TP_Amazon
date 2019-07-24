@@ -54,9 +54,19 @@ public class DaoFactory {
         return new ArticleDaoImpl();
     }
     
- // Récupération de ArticleDao
+ // Récupération de ClientDao
     public ClientDao getClientDao() {
         return new ClientDaoImpl(this);
+    }
+    
+ // Récupération de CommandeDao
+    public CommandeDao getCommandeDao() {
+        return new CommandeDaoImpl();
+    }
+    
+ // Récupération de CommandeDao
+    public CommandeLineDao getCommandeLineDao() {
+        return new CommandeLineDaoImpl();
     }
 
 }

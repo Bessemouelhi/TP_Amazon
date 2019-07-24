@@ -65,12 +65,12 @@ public class ArticleDaoImpl implements ArticleDao {
 
         try {
             connexion = DaoFactory.getConnection();
-            statement = connexion.prepareStatement("SELECT id, nom, description, prix FROM article WHERE id = UuidToBin(?);");
+            statement = connexion.prepareStatement("SELECT UuidFromBin(id), nom, description, prix FROM article WHERE id = UuidToBin(?);");
             statement.setString(1, id.toString());
             resultat = statement.executeQuery();
             
             while (resultat.next()) {
-                UUID idA = UUID.fromString(resultat.getString("id"));
+                UUID idA = UUID.fromString(resultat.getString("UuidFromBin(id)"));
                 String nom = resultat.getString("nom");
                 String description = resultat.getString("description");
                 double prix = resultat.getDouble("prix");
@@ -88,6 +88,7 @@ public class ArticleDaoImpl implements ArticleDao {
                 }
             } catch (SQLException e2) {
             }
+            e.printStackTrace();
             throw new DaoException("Impossible de communiquer avec la base de données");
         }
         /*finally {
@@ -113,10 +114,10 @@ public class ArticleDaoImpl implements ArticleDao {
         try {
             connexion = DaoFactory.getConnection();
             statement = connexion.createStatement();
-            resultat = statement.executeQuery("SELECT id, nom, description, prix FROM article;");
+            resultat = statement.executeQuery("SELECT UuidFromBin(id), nom, description, prix FROM article;");
 
             while (resultat.next()) {
-            	UUID idA = UUID.fromString(resultat.getString("id"));
+            	UUID idA = UUID.fromString(resultat.getString("UuidFromBin(id)"));
             	String nom = resultat.getString("nom");
                 String description = resultat.getString("description");
                 double prix = resultat.getDouble("prix");
@@ -130,6 +131,7 @@ public class ArticleDaoImpl implements ArticleDao {
                 listArticle.add(article);
             }
         } catch (SQLException e) {
+        	e.printStackTrace();
             throw new DaoException("Impossible de communiquer avec la base de données");
         }
         /*finally {

@@ -13,17 +13,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sdzee.tp.beans.Article;
+import com.sdzee.tp.dao.ArticleDao;
+import com.sdzee.tp.dao.DaoException;
+import com.sdzee.tp.dao.DaoFactory;
 import com.sdzee.tp.utils.Functions;
 import com.sdzee.tp.utils.StaticStrings;
 
 @WebServlet(StaticStrings.ARTICLE_URL_DELETE)
 public class SuppressionArticle extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	DaoFactory daoFactory = DaoFactory.getInstance();
+	ArticleDao articleDao = daoFactory.getArticleDao();
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         /* Get id from form */
         UUID id = UUID.fromString( Functions.getValeurParametre( request, StaticStrings.ARTICLE_PARAM_ID ) );
+        
+        try {
+			//Client client = clientDao.getById(id);
+        	articleDao.delete(id);
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         /* Get the corresponding map in context */
         ServletContext context = request.getServletContext();
